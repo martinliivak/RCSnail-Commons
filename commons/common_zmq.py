@@ -31,17 +31,19 @@ async def initialize_synced_sub(context: zmq.asyncio.Context, queue: zmq.asyncio
     synchronizer.close()
 
 
-def send_array(queue: zmq.Socket, data, flags=0, copy=True, track=False):
-    """send a numpy array with metadata"""
+def send_array_with_json(queue: zmq.Socket, data, json_data, flags=0, copy=True, track=False):
+    """send a json and numpy array with metadata"""
+    queue.send_json(json_data, flags | zmq.SNDMORE)
     metadata = dict(dtype=str(data.dtype), shape=data.shape, )
     queue.send_json(metadata, flags | zmq.SNDMORE)
     return queue.send(data, flags, copy=copy, track=track)
 
 
-async def recv_array(queue: zmq.asyncio.Socket, flags=0, copy=True, track=False):
-    """recv a numpy array"""
+async def recv_array_with_json(queue: zmq.asyncio.Socket, flags=0, copy=True, track=False):
+    """recv a json and numpy array"""
+    json_data = await queue.recv_json(flags=flags)
     metadata = await queue.recv_json(flags=flags)
     msg = await queue.recv(flags=flags, copy=copy, track=track)
     buf = memoryview(msg)
     data = np.frombuffer(buf, dtype=metadata['dtype'])
-    return data.reshape(metadata['shape'])
+    return json_data, data.reshape(metadata['shape'])
