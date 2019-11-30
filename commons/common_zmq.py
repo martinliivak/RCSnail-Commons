@@ -1,11 +1,9 @@
-import asyncio
 import numpy as np
 import zmq
 import zmq.asyncio
 
 
-def initialize_synced_pubs(context: zmq.Context, port):
-    queue = context.socket(zmq.PUB)
+def initialize_synced_pubs(context: zmq.Context, queue: zmq.Socket, port):
     queue.sndhwm = 1100000
     queue.bind('tcp://127.0.0.1:{}'.format(port))
 
@@ -19,11 +17,9 @@ def initialize_synced_pubs(context: zmq.Context, port):
         subscribers += 1
 
     synchronizer.close()
-    return queue
 
 
-async def initialize_synced_sub(context: zmq.asyncio.Context, port):
-    queue = context.socket(zmq.SUB)
+async def initialize_synced_sub(context: zmq.asyncio.Context, queue: zmq.asyncio.Socket, port):
     queue.connect('tcp://127.0.0.1:{}'.format(port))
     queue.setsockopt(zmq.SUBSCRIBE, b'')
 
@@ -31,9 +27,8 @@ async def initialize_synced_sub(context: zmq.asyncio.Context, port):
     synchronizer.connect('tcp://127.0.0.1:5560')
     synchronizer.send(b'')
     await synchronizer.recv()
-    synchronizer.close()
 
-    return queue
+    synchronizer.close()
 
 
 def send_array(queue: zmq.Socket, data, flags=0, copy=True, track=False):

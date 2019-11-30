@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="RCSnail-Commons",
-    version="1.0.0",
+    version="1.0.3",
     author="Martin Liivak",
     author_email="martin.liivak@gmail.com",
     description="RCSnail AI project's common methods",

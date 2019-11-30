@@ -1,5 +1,5 @@
 import ruamel.yaml as yaml
-from src.configuration import Configuration
+from commons.configuration import Configuration
 
 
 class ConfigurationManager:
