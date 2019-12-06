@@ -3,13 +3,13 @@ import zmq
 import zmq.asyncio
 
 
-def initialize_synced_pub(context: zmq.Context, queue: zmq.Socket, port):
+async def initialize_synced_pub(context: zmq.asyncio.Context, queue: zmq.asyncio.Socket, port):
     queue.sndhwm = 1100000
     queue.bind('tcp://127.0.0.1:{}'.format(port))
 
     synchronizer = context.socket(zmq.REP)
     synchronizer.bind('tcp://127.0.0.1:5560')
-    synchronizer.recv()
+    await synchronizer.recv()
     synchronizer.send(b'')
 
     synchronizer.close()
@@ -27,7 +27,7 @@ async def initialize_synced_sub(context: zmq.asyncio.Context, queue: zmq.asyncio
     synchronizer.close()
 
 
-def send_array_with_json(queue: zmq.Socket, data, json_data, flags=0, copy=True, track=False):
+def send_array_with_json(queue: zmq.asyncio.Socket, data, json_data, flags=0, copy=True, track=False):
     """send a json and numpy array with metadata"""
     queue.send_json(json_data, flags | zmq.SNDMORE)
     metadata = dict(dtype=str(data.dtype), shape=data.shape, )
