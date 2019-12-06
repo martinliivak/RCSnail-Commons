@@ -3,18 +3,14 @@ import zmq
 import zmq.asyncio
 
 
-def initialize_synced_pubs(context: zmq.Context, queue: zmq.Socket, port):
+def initialize_synced_pub(context: zmq.Context, queue: zmq.Socket, port):
     queue.sndhwm = 1100000
     queue.bind('tcp://127.0.0.1:{}'.format(port))
 
     synchronizer = context.socket(zmq.REP)
     synchronizer.bind('tcp://127.0.0.1:5560')
-
-    subscribers = 0
-    while subscribers < 1:
-        synchronizer.recv()
-        synchronizer.send(b'')
-        subscribers += 1
+    synchronizer.recv()
+    synchronizer.send(b'')
 
     synchronizer.close()
 
@@ -46,4 +42,4 @@ async def recv_array_with_json(queue: zmq.asyncio.Socket, flags=0, copy=True, tr
     msg = await queue.recv(flags=flags, copy=copy, track=track)
     buf = memoryview(msg)
     data = np.frombuffer(buf, dtype=metadata['dtype'])
-    return json_data, data.reshape(metadata['shape'])
+    return data.reshape(metadata['shape']), json_data
