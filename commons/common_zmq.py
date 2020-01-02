@@ -3,8 +3,18 @@ import zmq
 import zmq.asyncio
 
 
-async def initialize_synced_pub(context: zmq.asyncio.Context, queue: zmq.asyncio.Socket, port):
-    queue.sndhwm = 1100000
+async def initialize_publisher(queue: zmq.asyncio.Socket, port):
+    queue.sndhwm = 10000
+    queue.bind('tcp://127.0.0.1:{}'.format(port))
+
+
+async def initialize_subscriber(queue: zmq.asyncio.Socket, port):
+    queue.connect('tcp://127.0.0.1:{}'.format(port))
+    queue.setsockopt(zmq.SUBSCRIBE, b'')
+
+
+async def initialize_synced_publisher(context: zmq.asyncio.Context, queue: zmq.asyncio.Socket, port):
+    queue.sndhwm = 10000
     queue.bind('tcp://127.0.0.1:{}'.format(port))
 
     synchronizer = context.socket(zmq.REP)
@@ -15,7 +25,7 @@ async def initialize_synced_pub(context: zmq.asyncio.Context, queue: zmq.asyncio
     synchronizer.close()
 
 
-async def initialize_synced_sub(context: zmq.asyncio.Context, queue: zmq.asyncio.Socket, port):
+async def initialize_synced_subscriber(context: zmq.asyncio.Context, queue: zmq.asyncio.Socket, port):
     queue.connect('tcp://127.0.0.1:{}'.format(port))
     queue.setsockopt(zmq.SUBSCRIBE, b'')
 
