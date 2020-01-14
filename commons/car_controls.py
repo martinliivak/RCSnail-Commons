@@ -12,14 +12,15 @@ class CarControls:
         return [self.gear, self.steering, self.throttle, self.braking]
 
 
-class CarControlDiffs:
-    __slots__ = ['d_gear', 'd_steering', 'd_throttle', 'd_braking']
+class CarControlUpdates:
+    __slots__ = ['d_gear', 'd_steering', 'd_throttle', 'd_braking', 'supervisor']
 
-    def __init__(self, gear, steering, throttle, braking):
+    def __init__(self, gear, steering, throttle, braking, supervisor: bool):
         self.d_gear = gear
         self.d_steering = steering
         self.d_throttle = throttle
         self.d_braking = braking
+        self.supervisor = supervisor
 
     def to_list(self):
         return [self.d_gear, self.d_steering, self.d_throttle, self.d_braking]
