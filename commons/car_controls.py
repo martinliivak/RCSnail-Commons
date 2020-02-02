@@ -15,7 +15,7 @@ class CarControls:
 class CarControlUpdates:
     __slots__ = ['d_gear', 'd_steering', 'd_throttle', 'd_braking', 'supervisor']
 
-    def __init__(self, gear, steering, throttle, braking, supervisor: bool):
+    def __init__(self, gear, steering, throttle, braking, supervisor: bool = False):
         self.d_gear = gear
         self.d_steering = steering
         self.d_throttle = throttle
