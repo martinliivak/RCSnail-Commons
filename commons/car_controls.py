@@ -8,7 +8,7 @@ class CarControls:
         self.throttle = throttle
         self.braking = braking
 
-        if update_mode not in ['supervisor', 'steer']:
+        if update_mode not in ['supervisor', 'steer', 'steer_diff']:
             raise ValueError
         self.update_mode = update_mode
 
@@ -28,7 +28,7 @@ class CarControlUpdates:
         self.d_throttle = throttle
         self.d_braking = braking
 
-        if update_mode not in ['supervisor', 'steer']:
+        if update_mode not in ['supervisor', 'steer', 'steer_diff']:
             raise ValueError
         self.update_mode = update_mode
 
